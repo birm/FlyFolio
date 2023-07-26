@@ -8,11 +8,15 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
 fun Application.configureDatabases() {
+    val database_str = System.getenv("database_str") ?: "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
+    val database_user =System.getenv("database_user") ?: "root"
+    val database_password =System.getenv("database_password") ?: ""
+    val database_driver =System.getenv("database_driver") ?: "org.h2.Driver"
     val database = Database.connect(
-            url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-            user = "root",
-            driver = "org.h2.Driver",
-            password = ""
+            url = database_str,
+            user = database_user,
+            driver = database_driver,
+            password = database_password
         )
     val userService = UserService(database)
     routing {
@@ -21,6 +25,11 @@ fun Application.configureDatabases() {
             val user = call.receive<ExposedUser>()
             val id = userService.create(user)
             call.respond(HttpStatusCode.Created, id)
+        }
+        // list users
+        get("/users") {
+            val users = userService.list()
+            call.respond(HttpStatusCode.OK, users)
         }
         // Read user
         get("/users/{id}") {

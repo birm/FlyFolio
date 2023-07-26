@@ -1,18 +1,26 @@
 volumes:
-  db-data:
+  db-data2:
 services:
   api:
     build: ./flyfolio-api
     container_name: ffa-api
     ports: 
       - 8080:8080
-  db:
-    image: mariadb
-    container_name: ffa-db
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    volumes:
-      - db-data:/var/lib/mysql
+      database_str: "jdbc:postgresql://ffa-db:5432/flyfolio"
+      database_user: postgres
+      database_password: postgres
+      database_driver: "org.postgresql.Driver"
+  db:
+      image: postgres:14.1-alpine
+      container_name: ffa-db
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: flyfolio
+      ports:
+        - '5432:5432'
+      volumes: 
+        - db-data2:/var/lib/postgresql/data
+        - ./create_tables.sql:/docker-entrypoint-initdb.d/create_database.sql
+        - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
