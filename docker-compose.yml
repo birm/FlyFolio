@@ -1,0 +1,18 @@
+volumes:
+  db-data:
+services:
+  api:
+    build: ./flyfolio-api
+    container_name: ffa-api
+    ports: 
+      - 8080:8080
+  db:
+    image: mariadb
+    container_name: ffa-db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/mysql
