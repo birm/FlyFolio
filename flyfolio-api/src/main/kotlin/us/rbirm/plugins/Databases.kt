@@ -18,40 +18,40 @@ fun Application.configureDatabases() {
             driver = database_driver,
             password = database_password
         )
-    val userService = UserService(database)
+    val observationService = ObservationService(database)
     routing {
-        // Create user
-        post("/users") {
-            val user = call.receive<ExposedUser>()
-            val id = userService.create(user)
+        // Create
+        post("/observations") {
+            val observation = call.receive<ExposedObservation>()
+            val id = observationService.create(observation)
             call.respond(HttpStatusCode.Created, id)
         }
-        // list users
-        get("/users") {
-            val users = userService.list()
-            call.respond(HttpStatusCode.OK, users)
+        // List
+        get("/observations") {
+            val observations = observationService.list()
+            call.respond(HttpStatusCode.OK, observations)
         }
-        // Read user
-        get("/users/{id}") {
+        // Read
+        get("/observations/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = userService.read(id)
-            if (user != null) {
-                call.respond(HttpStatusCode.OK, user)
+            val observation = observationService.read(id)
+            if (observation != null) {
+                call.respond(HttpStatusCode.OK, observation)
             } else {
                 call.respond(HttpStatusCode.NotFound)
             }
         }
-        // Update user
-        put("/users/{id}") {
+        // Update
+        put("/observations/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = call.receive<ExposedUser>()
-            userService.update(id, user)
+            val observation = call.receive<ExposedObservation>()
+            observationService.update(id, observation)
             call.respond(HttpStatusCode.OK)
         }
-        // Delete user
-        delete("/users/{id}") {
+        // Delete
+        delete("/observations/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            userService.delete(id)
+            observationService.delete(id)
             call.respond(HttpStatusCode.OK)
         }
     }
