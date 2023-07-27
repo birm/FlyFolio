@@ -1,0 +1,16 @@
+name: Build Gradle project
+
+on:
+  push:
+
+jobs:
+  build-api:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout project sources
+      uses: actions/checkout@v3
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+    - name: Run build with Gradle Wrapper
+      working-directory: ./flyfolio-api/
+      run: ./gradlew build
