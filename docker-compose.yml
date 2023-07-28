@@ -37,3 +37,15 @@ services:
       db_user: postgres
       db_pw: postgres
       db_db: "flyfolio"
+  analysis:
+    build: ./data_analysis
+    container_name: ffa-analysis
+    depends_on:
+      - db
+    environment:
+      db_host: "ffa-db"
+      db_user: postgres
+      db_pw: postgres
+      db_db: "flyfolio"
+    ports:
+      - 4444:4000
