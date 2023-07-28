@@ -1,16 +1,6 @@
 volumes:
   db-data2:
 services:
-  api:
-    build: ./flyfolio-api
-    container_name: ffa-api
-    ports: 
-      - 8080:8080
-    environment:
-      database_str: "jdbc:postgresql://ffa-db:5432/flyfolio"
-      database_user: postgres
-      database_password: postgres
-      database_driver: "org.postgresql.Driver"
   db:
       image: postgres:14.1-alpine
       container_name: ffa-db
@@ -24,3 +14,25 @@ services:
         - db-data2:/var/lib/postgresql/data
         - ./create_tables.sql:/docker-entrypoint-initdb.d/create_database.sql
         - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+  api:
+    build: ./flyfolio-api
+    depends_on:
+      - db
+    container_name: ffa-api
+    ports: 
+      - 8080:8080
+    environment:
+      database_str: "jdbc:postgresql://ffa-db:5432/flyfolio"
+      database_user: postgres
+      database_password: postgres
+      database_driver: "org.postgresql.Driver"
+  collect:
+    build: ./data_collection
+    container_name: ffa-collect
+    depends_on:
+      - db
+    environment:
+      db_host: "ffa-db:5432"
+      db_user: postgres
+      db_pw: postgres
+      db_db: "flyfolio"
