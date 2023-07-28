@@ -1,19 +1,20 @@
+version: '3'
+
 volumes:
   db-data2:
 services:
   db:
-      image: postgres:14.1-alpine
-      container_name: ffa-db
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: flyfolio
-      ports:
-        - '5432:5432'
-      volumes: 
-        - db-data2:/var/lib/postgresql/data
-        - ./create_tables.sql:/docker-entrypoint-initdb.d/create_database.sql
-        - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    image: postgres:14.1-alpine
+    container_name: ffa-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: flyfolio
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db-data2:/var/lib/postgresql/data
+      - ./create_tables.sql:/docker-entrypoint-initdb.d/create_database.sql
   api:
     build: ./flyfolio-api
     depends_on:
@@ -32,7 +33,7 @@ services:
     depends_on:
       - db
     environment:
-      db_host: "ffa-db:5432"
+      db_host: "ffa-db"
       db_user: postgres
       db_pw: postgres
       db_db: "flyfolio"
